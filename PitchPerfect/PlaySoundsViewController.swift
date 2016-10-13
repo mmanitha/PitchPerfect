@@ -11,6 +11,7 @@ import AVFoundation
 
 class PlaySoundsViewController: UIViewController {
     
+    
     // MARK: Variables
     
     var recordedAudioURL: NSURL!
@@ -30,9 +31,32 @@ class PlaySoundsViewController: UIViewController {
     @IBOutlet weak var stopPlaybackButton: UIButton!
     
     
+    override func viewDidLoad() {
+        
+        // Set UIButton Aspect Fit
+        snailButton.imageView?.contentMode = UIViewContentMode.scaleAspectFit
+        rabbitButton.imageView?.contentMode = UIViewContentMode.scaleAspectFit
+        chipmunkButton.imageView?.contentMode = UIViewContentMode.scaleAspectFit
+        vaderButton.imageView?.contentMode = UIViewContentMode.scaleAspectFit
+        echoButton.imageView?.contentMode = UIViewContentMode.scaleAspectFit
+        reverbButton.imageView?.contentMode = UIViewContentMode.scaleAspectFit
+        stopPlaybackButton.imageView?.contentMode = UIViewContentMode.scaleAspectFit
+        
+        super.viewDidLoad()
+        
+        print("PlaySoundViewController loaded.")
+        
+        configureUI(playState: .NotPlaying)
+        
+        setupAudio()
+    }
+    
+    
     // MARK: Button Actions
 
-    enum ButtonType: Int { case Slow = 0, Fast, Chipmunk, Vader, Echo, Reverb }
+    enum ButtonType: Int {
+        case Slow = 0, Fast, Chipmunk, Vader, Echo, Reverb
+    }
     
     @IBAction func playSoundForButton(sender: UIButton) {
         print("Play sound button pressed.")
@@ -65,18 +89,7 @@ class PlaySoundsViewController: UIViewController {
 
     
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        print("PlaySoundViewController loaded.")
-        setupAudio()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        configureUI(playState: .NotPlaying)
-    }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-    }
+
 
 }

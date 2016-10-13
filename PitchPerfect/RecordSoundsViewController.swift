@@ -8,6 +8,7 @@
 
 import UIKit
 import AVFoundation
+import QuartzCore
 
 class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
 
@@ -17,22 +18,31 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
     
     var audioRecorder:AVAudioRecorder!
     
+    
+    // MARK: UI Function to toggle button states
+    
+    func configureUI(recording: Bool) {
+        if recording == true {
+            recordButton.isEnabled = true
+            stopRecordingButton.isEnabled = false
+            recordingLabel.text = "Recording in progress."
+        } else {
+            recordButton.isEnabled = false
+            stopRecordingButton.isEnabled = true
+            recordingLabel.text = "Recording stopped."
+        }
+    }
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        recordButton.isEnabled = true
-        stopRecordingButton.isEnabled = false
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        configureUI(recording: true)
     }
 
     @IBAction func recordAudio(_ sender: UIButton) {
         
-        recordButton.isEnabled = false
-        stopRecordingButton.isEnabled = true
-        recordingLabel.text = "Recording in progress."
+        //configureUI(recordingState: .Recording)
+        configureUI(recording: false)
         
         let dirPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
         
@@ -54,9 +64,8 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
 
     @IBAction func stopRecording(_ sender: UIButton) {
         
-        recordButton.isEnabled = true
-        stopRecordingButton.isEnabled = false
-        recordingLabel.text = "Recording stopped."
+        //configureUI(recordingState: .NotRecording)
+        configureUI(recording: true)
         audioRecorder.stop()
         let audioSession = AVAudioSession.sharedInstance()
         try! audioSession.setActive(false)
@@ -72,9 +81,8 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
     
     // Makes sure audio stops recording before performing segue.
     func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
-        print("Audio finished recording.")
         if (flag) {
-            self.performSegue(withIdentifier: "stopRecording", sender: audioRecorder.url)
+            performSegue(withIdentifier: "stopRecording", sender: audioRecorder.url)
         }else{
             print("Audio failed to save.")
         }
