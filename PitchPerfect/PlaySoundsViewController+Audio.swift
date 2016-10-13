@@ -8,6 +8,7 @@ import UIKit
 import AVFoundation
 
 extension PlaySoundsViewController: AVAudioPlayerDelegate {
+    
     struct Alerts {
         static let DismissAlert = "Dismiss"
         static let RecordingDisabledTitle = "Recording Disabled"
@@ -138,7 +139,6 @@ extension PlaySoundsViewController: AVAudioPlayerDelegate {
         }
     }
     
-    
     // MARK: UI Functions
 
     func configureUI(playState: PlayingState) {
@@ -152,7 +152,6 @@ extension PlaySoundsViewController: AVAudioPlayerDelegate {
         }
     }
     
-    
     func setPlayButtonsEnabled(enabled: Bool) {
         snailButton.isEnabled = enabled
         chipmunkButton.isEnabled = enabled
@@ -161,7 +160,6 @@ extension PlaySoundsViewController: AVAudioPlayerDelegate {
         echoButton.isEnabled = enabled
         reverbButton.isEnabled = enabled
     }
-
     
     func showAlert(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)

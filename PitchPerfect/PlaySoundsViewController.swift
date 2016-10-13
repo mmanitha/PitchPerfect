@@ -11,7 +11,6 @@ import AVFoundation
 
 class PlaySoundsViewController: UIViewController {
     
-    
     // MARK: Variables
     
     var recordedAudioURL: NSURL!
@@ -29,7 +28,6 @@ class PlaySoundsViewController: UIViewController {
     @IBOutlet weak var echoButton: UIButton!
     @IBOutlet weak var reverbButton: UIButton!
     @IBOutlet weak var stopPlaybackButton: UIButton!
-    
     
     override func viewDidLoad() {
         
@@ -50,7 +48,6 @@ class PlaySoundsViewController: UIViewController {
         
         setupAudio()
     }
-    
     
     // MARK: Button Actions
 
@@ -78,8 +75,6 @@ class PlaySoundsViewController: UIViewController {
         
         configureUI(playState: .Playing)
     }
-    
-    
     
     @IBAction func stopButtonPressed(sender: UIButton) {
         

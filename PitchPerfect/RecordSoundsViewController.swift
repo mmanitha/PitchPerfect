@@ -18,31 +18,27 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
     
     var audioRecorder:AVAudioRecorder!
     
-    
     // MARK: UI Function to toggle button states
     
     func configureUI(recording: Bool) {
         if recording == true {
-            recordButton.isEnabled = true
-            stopRecordingButton.isEnabled = false
-            recordingLabel.text = "Recording in progress."
-        } else {
             recordButton.isEnabled = false
             stopRecordingButton.isEnabled = true
-            recordingLabel.text = "Recording stopped."
+        } else {
+            recordButton.isEnabled = true
+            stopRecordingButton.isEnabled = false
         }
     }
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureUI(recording: true)
+        configureUI(recording: false)
     }
 
     @IBAction func recordAudio(_ sender: UIButton) {
         
         //configureUI(recordingState: .Recording)
-        configureUI(recording: false)
+        configureUI(recording: true)
         
         let dirPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
         
@@ -60,13 +56,15 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
         audioRecorder.isMeteringEnabled = true
         audioRecorder.prepareToRecord()
         audioRecorder.record()
+        recordingLabel.text = "Recording in progress."
     }
 
     @IBAction func stopRecording(_ sender: UIButton) {
         
         //configureUI(recordingState: .NotRecording)
-        configureUI(recording: true)
+        configureUI(recording: false)
         audioRecorder.stop()
+        recordingLabel.text = "Recording stopped."
         let audioSession = AVAudioSession.sharedInstance()
         try! audioSession.setActive(false)
     }
@@ -84,9 +82,10 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
         if (flag) {
             performSegue(withIdentifier: "stopRecording", sender: audioRecorder.url)
         }else{
-            print("Audio failed to save.")
+            let alert = UIAlertController(title: "Error", message: "Audio file failed to save.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
+            self.present(alert, animated: true, completion: nil)
         }
     }
-    
 }
 
