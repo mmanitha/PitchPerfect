@@ -11,9 +11,11 @@ import AVFoundation
 
 class PlaySoundsViewController: UIViewController {
     
+    var delegate : didDismissViewControllerDelegate?
+    
     // MARK: Variables
     
-    var recordedAudioURL: NSURL!
+    var recordedAudioURL: URL!
     var audioFile: AVAudioFile!
     var audioEngine: AVAudioEngine!
     var audioPlayerNode: AVAudioPlayerNode!
@@ -39,12 +41,12 @@ class PlaySoundsViewController: UIViewController {
         echoButton.imageView?.contentMode = UIViewContentMode.scaleAspectFit
         reverbButton.imageView?.contentMode = UIViewContentMode.scaleAspectFit
         stopPlaybackButton.imageView?.contentMode = UIViewContentMode.scaleAspectFit
-        
+                
         super.viewDidLoad()
         
         print("PlaySoundViewController loaded.")
         
-        configureUI(playState: .NotPlaying)
+        configureUI(.notPlaying)
         
         setupAudio()
     }
@@ -52,39 +54,40 @@ class PlaySoundsViewController: UIViewController {
     // MARK: Button Actions
 
     enum ButtonType: Int {
-        case Slow = 0, Fast, Chipmunk, Vader, Echo, Reverb
+        case slow = 0, fast, chipmunk, vader, echo, reverb
     }
     
-    @IBAction func playSoundForButton(sender: UIButton) {
+    @IBAction func playSoundForButton(_ sender: UIButton) {
         print("Play sound button pressed.")
         
         switch(ButtonType(rawValue: sender.tag)!) {
-        case .Slow:
-            playSound(rate: 0.5)
-        case .Fast:
-            playSound(rate: 2.0)
-        case .Chipmunk:
+        case .slow:
+            playSound(0.5)
+        case .fast:
+            playSound(2.0)
+        case .chipmunk:
             playSound(pitch: 1000)
-        case .Vader:
+        case .vader:
             playSound(pitch: -1000)
-        case .Echo:
+        case .echo:
             playSound(echo: true)
-        case .Reverb:
+        case .reverb:
             playSound(reverb: true)
         }
         
-        configureUI(playState: .Playing)
+        configureUI(.playing)
     }
     
-    @IBAction func stopButtonPressed(sender: UIButton) {
+    @IBAction func stopButtonPressed(_ sender: UIButton) {
         
         stopAudio()
         print("Stop button pressed.")
     }
 
-    
-    
-
-
+    override func viewDidDisappear(_ animated: Bool) {
+        if let d = delegate {
+            d.didDismissViewController(true)
+        }
+    }
 
 }

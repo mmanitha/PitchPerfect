@@ -24,7 +24,7 @@ extension PlaySoundsViewController: AVAudioPlayerDelegate {
     
     // raw values correspond to sender tags
     enum PlayingState {
-        case Playing, NotPlaying
+        case playing, notPlaying
     }
 
     
@@ -35,12 +35,12 @@ extension PlaySoundsViewController: AVAudioPlayerDelegate {
         do {
             audioFile = try AVAudioFile(forReading: recordedAudioURL as URL)
         } catch {
-            showAlert(title: Alerts.AudioFileError, message: String(describing: error))
+            showAlert(Alerts.AudioFileError, message: String(describing: error))
         }
         print("Audio has been setup")
     }
     
-    func playSound(rate: Float? = nil, pitch: Float? = nil, echo: Bool = false, reverb: Bool = false) {
+    func playSound(_ rate: Float? = nil, pitch: Float? = nil, echo: Bool = false, reverb: Bool = false) {
         
         // initialize audio engine components
         audioEngine = AVAudioEngine()
@@ -72,13 +72,13 @@ extension PlaySoundsViewController: AVAudioPlayerDelegate {
         
         // connect nodes
         if echo == true && reverb == true {
-            connectAudioNodes(nodes: audioPlayerNode, changeRatePitchNode, echoNode, reverbNode, audioEngine.outputNode)
+            connectAudioNodes(audioPlayerNode, changeRatePitchNode, echoNode, reverbNode, audioEngine.outputNode)
         } else if echo == true {
-            connectAudioNodes(nodes: audioPlayerNode, changeRatePitchNode, echoNode, audioEngine.outputNode)
+            connectAudioNodes(audioPlayerNode, changeRatePitchNode, echoNode, audioEngine.outputNode)
         } else if reverb == true {
-            connectAudioNodes(nodes: audioPlayerNode, changeRatePitchNode, reverbNode, audioEngine.outputNode)
+            connectAudioNodes(audioPlayerNode, changeRatePitchNode, reverbNode, audioEngine.outputNode)
         } else {
-            connectAudioNodes(nodes: audioPlayerNode, changeRatePitchNode, audioEngine.outputNode)
+            connectAudioNodes(audioPlayerNode, changeRatePitchNode, audioEngine.outputNode)
         }
         
         // schedule to play and start the engine!
@@ -104,7 +104,7 @@ extension PlaySoundsViewController: AVAudioPlayerDelegate {
         do {
             try audioEngine.start()
         } catch {
-            showAlert(title: Alerts.AudioEngineError, message: String(describing: error))
+            showAlert(Alerts.AudioEngineError, message: String(describing: error))
             return
         }
         
@@ -115,7 +115,7 @@ extension PlaySoundsViewController: AVAudioPlayerDelegate {
     
     // MARK: Connect List of Audio Nodes
     
-    func connectAudioNodes(nodes: AVAudioNode...) {
+    func connectAudioNodes(_ nodes: AVAudioNode...) {
         for x in 0..<nodes.count-1 {
             audioEngine.connect(nodes[x], to: nodes[x+1], format: audioFile.processingFormat)
         }
@@ -127,7 +127,7 @@ extension PlaySoundsViewController: AVAudioPlayerDelegate {
             stopTimer.invalidate()
         }
         
-        configureUI(playState: .NotPlaying)
+        configureUI(.notPlaying)
         
         if let audioPlayerNode = audioPlayerNode {
             audioPlayerNode.stop()
@@ -141,18 +141,18 @@ extension PlaySoundsViewController: AVAudioPlayerDelegate {
     
     // MARK: UI Functions
 
-    func configureUI(playState: PlayingState) {
+    func configureUI(_ playState: PlayingState) {
         switch(playState) {
-        case .Playing:
-            setPlayButtonsEnabled(enabled: false)
+        case .playing:
+            setPlayButtonsEnabled(false)
             stopPlaybackButton.isEnabled = true
-        case .NotPlaying:
-            setPlayButtonsEnabled(enabled: true)
+        case .notPlaying:
+            setPlayButtonsEnabled(true)
             stopPlaybackButton.isEnabled = false
         }
     }
     
-    func setPlayButtonsEnabled(enabled: Bool) {
+    func setPlayButtonsEnabled(_ enabled: Bool) {
         snailButton.isEnabled = enabled
         chipmunkButton.isEnabled = enabled
         rabbitButton.isEnabled = enabled
@@ -161,7 +161,7 @@ extension PlaySoundsViewController: AVAudioPlayerDelegate {
         reverbButton.isEnabled = enabled
     }
     
-    func showAlert(title: String, message: String) {
+    func showAlert(_ title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: Alerts.DismissAlert, style: .default, handler: nil))
         self.present(alert, animated: true, completion: nil)

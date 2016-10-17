@@ -10,7 +10,7 @@ import UIKit
 import AVFoundation
 import QuartzCore
 
-class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
+class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate, didDismissViewControllerDelegate {
 
     @IBOutlet weak var recordingLabel: UILabel!
     @IBOutlet weak var recordButton: UIButton!
@@ -18,53 +18,62 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
     
     var audioRecorder:AVAudioRecorder!
     
-    // MARK: UI Function to toggle button states
+    // MARK: UI Functions
     
-    func configureUI(recording: Bool) {
-        if recording == true {
+    enum RecordingState {
+        case recording, recordingStopped, recordAgain
+    }
+    
+    func configureUI(_ state: RecordingState) {
+        switch(state) {
+        case .recording:
             recordButton.isEnabled = false
             stopRecordingButton.isEnabled = true
-        } else {
+            recordingLabel.text = "Recording in progress."
+        case .recordingStopped:
             recordButton.isEnabled = true
             stopRecordingButton.isEnabled = false
+            recordingLabel.text = "Recording stopped."
+        case .recordAgain:
+            recordButton.isEnabled = true
+            stopRecordingButton.isEnabled = false
+            recordingLabel.text = "Press button to record."
         }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureUI(recording: false)
+        didDismissViewController(false)
     }
 
     @IBAction func recordAudio(_ sender: UIButton) {
         
-        //configureUI(recordingState: .Recording)
-        configureUI(recording: true)
+        configureUI(.recording)
         
         let dirPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
         
         let recordingName = "recordedVoice.wav"
-        let pathArray = [dirPath, recordingName]
-        let filePath = NSURL.fileURL(withPathComponents: pathArray)
+        //let pathArray = [dirPath, recordingName]
+        let pathArray = dirPath+"/"+recordingName
+        //let filePath = URL.fileURL(withPathComponents: pathArray)
+        let filePath = URL(fileURLWithPath: pathArray)
         
         print(filePath)
         
         let session = AVAudioSession.sharedInstance()
         try! session.setCategory(AVAudioSessionCategoryPlayAndRecord)
         
-        try! audioRecorder = AVAudioRecorder(url: filePath!, settings: [:])
+        try! audioRecorder = AVAudioRecorder(url: filePath, settings: [:])
         audioRecorder.delegate = self
         audioRecorder.isMeteringEnabled = true
         audioRecorder.prepareToRecord()
         audioRecorder.record()
-        recordingLabel.text = "Recording in progress."
     }
 
     @IBAction func stopRecording(_ sender: UIButton) {
         
-        //configureUI(recordingState: .NotRecording)
-        configureUI(recording: false)
+        configureUI(.recordingStopped)
         audioRecorder.stop()
-        recordingLabel.text = "Recording stopped."
         let audioSession = AVAudioSession.sharedInstance()
         try! audioSession.setActive(false)
     }
@@ -72,8 +81,9 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "stopRecording" {
             let playSoundsVC = segue.destination as! PlaySoundsViewController
-            let recordedAudioURL = sender as! NSURL
+            let recordedAudioURL = sender as! URL
             playSoundsVC.recordedAudioURL = recordedAudioURL
+            playSoundsVC.delegate = self
         }
     }
     
@@ -87,5 +97,11 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate {
             self.present(alert, animated: true, completion: nil)
         }
     }
+    
+    // configure UI when returns from PlaySoundsVC
+    func didDismissViewController(_ dismissed: Bool) {
+        configureUI(.recordAgain)
+    }
+    
 }
 
