@@ -8,7 +8,6 @@ import UIKit
 import AVFoundation
 
 extension PlaySoundsViewController: AVAudioPlayerDelegate {
-    
     struct Alerts {
         static let DismissAlert = "Dismiss"
         static let RecordingDisabledTitle = "Recording Disabled"
@@ -26,7 +25,6 @@ extension PlaySoundsViewController: AVAudioPlayerDelegate {
     enum PlayingState {
         case playing, notPlaying
     }
-
     
     // MARK: Audio Functions
     
@@ -112,7 +110,6 @@ extension PlaySoundsViewController: AVAudioPlayerDelegate {
         audioPlayerNode.play()
     }
     
-    
     // MARK: Connect List of Audio Nodes
     
     func connectAudioNodes(_ nodes: AVAudioNode...) {
@@ -144,15 +141,15 @@ extension PlaySoundsViewController: AVAudioPlayerDelegate {
     func configureUI(_ playState: PlayingState) {
         switch(playState) {
         case .playing:
-            setPlayButtonsEnabled(false)
+            setPlayButtonsEnabled(enabled: false)
             stopPlaybackButton.isEnabled = true
         case .notPlaying:
-            setPlayButtonsEnabled(true)
+            setPlayButtonsEnabled(enabled: true)
             stopPlaybackButton.isEnabled = false
         }
     }
-    
-    func setPlayButtonsEnabled(_ enabled: Bool) {
+        
+    func setPlayButtonsEnabled(enabled: Bool) {
         snailButton.isEnabled = enabled
         chipmunkButton.isEnabled = enabled
         rabbitButton.isEnabled = enabled
@@ -166,8 +163,6 @@ extension PlaySoundsViewController: AVAudioPlayerDelegate {
         alert.addAction(UIAlertAction(title: Alerts.DismissAlert, style: .default, handler: nil))
         self.present(alert, animated: true, completion: nil)
     }
-
-    
 }
 
 

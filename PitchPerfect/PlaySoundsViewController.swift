@@ -31,6 +31,7 @@ class PlaySoundsViewController: UIViewController {
     @IBOutlet weak var reverbButton: UIButton!
     @IBOutlet weak var stopPlaybackButton: UIButton!
     
+    
     override func viewDidLoad() {
         
         // Set UIButton Aspect Fit
@@ -51,13 +52,14 @@ class PlaySoundsViewController: UIViewController {
         setupAudio()
     }
     
+    
     // MARK: Button Actions
 
     enum ButtonType: Int {
         case slow = 0, fast, chipmunk, vader, echo, reverb
     }
     
-    @IBAction func playSoundForButton(_ sender: UIButton) {
+    @IBAction func playSoundForButton(sender: UIButton) {
         print("Play sound button pressed.")
         
         switch(ButtonType(rawValue: sender.tag)!) {
@@ -78,7 +80,7 @@ class PlaySoundsViewController: UIViewController {
         configureUI(.playing)
     }
     
-    @IBAction func stopButtonPressed(_ sender: UIButton) {
+    @IBAction func stopButtonPressed(sender: UIButton) {
         
         stopAudio()
         print("Stop button pressed.")
@@ -89,5 +91,4 @@ class PlaySoundsViewController: UIViewController {
             d.didDismissViewController(true)
         }
     }
-
 }

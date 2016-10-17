@@ -18,10 +18,10 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate, did
     
     var audioRecorder:AVAudioRecorder!
     
-    // MARK: UI Functions
+    // MARK: UI Functions  
     
     enum RecordingState {
-        case recording, recordingStopped, recordAgain
+        case recording, stopRecording, pressRecord
     }
     
     func configureUI(_ state: RecordingState) {
@@ -30,11 +30,11 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate, did
             recordButton.isEnabled = false
             stopRecordingButton.isEnabled = true
             recordingLabel.text = "Recording in progress."
-        case .recordingStopped:
+        case .stopRecording:
             recordButton.isEnabled = true
             stopRecordingButton.isEnabled = false
             recordingLabel.text = "Recording stopped."
-        case .recordAgain:
+        case .pressRecord:
             recordButton.isEnabled = true
             stopRecordingButton.isEnabled = false
             recordingLabel.text = "Press button to record."
@@ -44,6 +44,7 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate, did
     override func viewDidLoad() {
         super.viewDidLoad()
         didDismissViewController(false)
+        configureUI(.pressRecord)
     }
 
     @IBAction func recordAudio(_ sender: UIButton) {
@@ -52,13 +53,8 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate, did
         
         let dirPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as String
         
-        let recordingName = "recordedVoice.wav"
-        //let pathArray = [dirPath, recordingName]
-        let pathArray = dirPath+"/"+recordingName
-        //let filePath = URL.fileURL(withPathComponents: pathArray)
-        let filePath = URL(fileURLWithPath: pathArray)
-        
-        print(filePath)
+        let recordingName = "/recordedVoice.wav"
+        let filePath = URL(fileURLWithPath: dirPath+recordingName)
         
         let session = AVAudioSession.sharedInstance()
         try! session.setCategory(AVAudioSessionCategoryPlayAndRecord)
@@ -72,7 +68,7 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate, did
 
     @IBAction func stopRecording(_ sender: UIButton) {
         
-        configureUI(.recordingStopped)
+        configureUI(.stopRecording)
         audioRecorder.stop()
         let audioSession = AVAudioSession.sharedInstance()
         try! audioSession.setActive(false)
@@ -92,16 +88,13 @@ class RecordSoundsViewController: UIViewController, AVAudioRecorderDelegate, did
         if (flag) {
             performSegue(withIdentifier: "stopRecording", sender: audioRecorder.url)
         }else{
-            let alert = UIAlertController(title: "Error", message: "Audio file failed to save.", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Dismiss", style: .default, handler: nil))
-            self.present(alert, animated: true, completion: nil)
+            print("Audio failed to save.")
         }
     }
     
     // configure UI when returns from PlaySoundsVC
     func didDismissViewController(_ dismissed: Bool) {
-        configureUI(.recordAgain)
+        configureUI(.pressRecord)
     }
-    
 }
 

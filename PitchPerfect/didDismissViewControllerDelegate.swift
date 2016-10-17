@@ -11,5 +11,4 @@ import Foundation
 protocol didDismissViewControllerDelegate {
     
     func didDismissViewController(_ dismissed: Bool)
-    
 }
